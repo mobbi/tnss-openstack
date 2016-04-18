@@ -1,0 +1,105 @@
+[[local|localrc]]
+RECLONE=yes
+
+# Minimal Contents
+# ----------------
+SERVICE_TOKEN=root
+ADMIN_PASSWORD=root
+MYSQL_PASSWORD=root
+RABBIT_PASSWORD=root
+SERVICE_PASSWORD=root
+#FIXED_RANGE=172.31.1.0/24
+#FLOATING_RANGE=192.168.33.0/25
+#HOST_IP=192.168.33.11
+
+# Logging
+# -------
+DEST=/opt/stack/
+LOGDIR=$DEST/logs
+LOGFILE=$LOGDIR/stack.sh.log
+LOG_COLOR=False
+
+# Using milestone-proposed branches
+# ---------------------------------
+
+# Uncomment these to grab the milestone-proposed branches from the repos:
+#CINDER_BRANCH=milestone-proposed
+#GLANCE_BRANCH=milestone-proposed
+#HORIZON_BRANCH=milestone-proposed
+#KEYSTONE_BRANCH=milestone-proposed
+#KEYSTONECLIENT_BRANCH=milestone-proposed
+#NOVA_BRANCH=milestone-proposed
+#NOVACLIENT_BRANCH=milestone-proposed
+#NEUTRON_BRANCH=milestone-proposed
+#SWIFT_BRANCH=milestone-proposed
+
+# Database Backend
+# -----------------
+disable_service mysql
+enable_service postgresql
+
+# RPC Backend
+# -----------
+disable_service rabbit
+
+# KEYSTONE
+# --------
+
+KEYSTONE_USE_MOD_WSGI="True"
+
+NOVA_USE_MOD_WSGI="True"
+
+SWIFT_USE_MOD_WSGI="True"
+
+HEAT_USE_MOD_WSGI="True"
+
+CINDER_USE_MOD_WSGI="True"
+
+# Libraries for GIT
+# -----------------
+LIBS_FROM_GIT=python-keystoneclient,oslo.config
+
+# Virtual Enviorment
+# ------------------
+PROJECT_VENV["glance"]=${GLANCE_DIR}.venv
+
+ADDITIONAL_VENV_PACKAGES="python-foo, python-bar"
+
+# PIP
+# -------
+PIP_UPGRADE=True
+
+
+# Guest Images
+# ------------
+DOWNLOAD_DEFAULT_IMAGES=False
+IMAGE_URLS="http://foo.bar.com/image.qcow,"
+IMAGE_URLS+="http://foo.bar.com/image2.qcow"
+
+# Instacne Type
+# -------------
+DEFAULT_INSTANCE_TYPE=m1.tiny
+
+# Neutron Networking
+# -------------------
+disable_service n-net
+enable_service q-svc q-agt q-dhcp q-l3
+
+
+# Heat
+# -------
+enable_service heat h-api h-api-cfn h-api-cw h-eng
+
+# Tempest
+# -------
+INSTALL_TEMPEST=True
+
+# Cell
+# -----
+enable_service n-cell
+
+# Cinder
+# -------
+VOLUME_GROUP="stack-volumes"
+VOLUME_NAME_PREFIX="volume-"
+VOLUME_BACKING_FILE_SIZE=10250M
