@@ -1,0 +1,138 @@
+# Sample ``local.conf`` for user-configurable variables in ``stack.sh``
+
+# NOTE: Copy this file to the root DevStack directory for it to work properly.
+
+# ``local.conf`` is a user-maintained settings file that is sourced from ``stackrc``.
+# This gives it the ability to override any variables set in ``stackrc``.
+# Also, most of the settings in ``stack.sh`` are written to only be set if no
+# value has already been set; this lets ``local.conf`` effectively override the
+# default values.
+
+# This is a collection of some of the settings we have found to be useful
+# in our DevStack development environments. Additional settings are described
+# in http://devstack.org/local.conf.html
+# These should be considered as samples and are unsupported DevStack code.
+
+# The ``localrc`` section replaces the old ``localrc`` configuration file.
+# Note that if ``localrc`` is present it will be used in favor of this section.
+[[local|localrc]]
+RECLONE=True
+
+# Minimal Contents
+# ----------------
+
+# While ``stack.sh`` is happy to run without ``localrc``, devlife is better when
+# there are a few minimal variables set:
+
+# If the ``*_PASSWORD`` variables are not set here you will be prompted to enter
+# values for them by ``stack.sh``and they will be added to ``local.conf``.
+ADMIN_PASSWORD=root
+DATABASE_PASSWORD=root
+RABBIT_PASSWORD=root
+SERVICE_PASSWORD=$ADMIN_PASSWORD
+SWIFT_HASH=$ADMIN_PASSWORD
+
+# ``HOST_IP`` and ``HOST_IPV6`` should be set manually for best results if
+# the NIC configuration of the host is unusual, i.e. ``eth1`` has the default
+# route but ``eth0`` is the public interface.  They are auto-detected in
+# ``stack.sh`` but often is indeterminate on later runs due to the IP moving
+# from an Ethernet interface to a bridge on the host. Setting it here also
+# makes it available for ``openrc`` to include when setting ``OS_AUTH_URL``.
+# Neither is set by default.
+HOST_IP=192.168.33.110
+#HOST_IPV6=2001:db8::7
+
+
+# Logging
+# -------
+
+LOGDIR=$DEST/logs
+SCREEN_LOGDIR=$LOGDIR
+SCREEN_HARDSTATUS="%{= rw} %H %{= wk} %L=%-w%{= bw}%30L> %n%f %t*%{= wk}%+Lw%-17< %-=%{= gk} %y/%m/%d %c"
+LOGFILE=$LOGDIR/devstack.log
+LOGDAYS=1
+#LOG_COLOR=False
+
+HORIZON_BRANCH=stable/mitaka
+KEYSTONE_BRANCH=stable/mitaka
+NOVA_BRANCH=stable/mitaka
+NEUTRON_BRANCH=stable/mitaka
+GLANCE_BRANCH=stable/mitaka
+CINDER_BRANCH=stable/mitaka
+HEAT_BRANCH=stable/mitaka
+
+#-----------------------------
+# To enable Ceilometer
+#-----------------------------
+enable_service ceilometer-acompute ceilometer-acentral ceilometer-collector ceilometer-api
+
+#-----------------------------
+# To enable Swift
+#-----------------------------
+enable_service s-proxy s-object s-container s-account
+
+#-----------------------------
+# To enable Sahara Plugin
+#-----------------------------
+enable_plugin sahara git://git.openstack.org/openstack/sahara stable/mitaka
+enable_plugin sahara-dashboard git://git.openstack.org/openstack/sahara-dashboard stable/mitaka
+
+#-----------------------------
+# To enable Trove Plugin
+#-----------------------------
+enable_plugin trove git://git.openstack.org/openstack/trove stable/mitaka
+enable_plugin trove-dashboard git://git.openstack.org/openstack/trove-dashboard stable/mitaka
+
+#-----------------------------
+# To enable Magnum Plugin
+#-----------------------------
+enable_plugin magnum https://git.openstack.org/openstack/magnum master
+enable_plugin magnum-ui https://git.openstack.org/openstack/magnum-ui master
+
+#-------------------------------------
+enable_plugin designate https://git.openstack.org/openstack/designate stable/mitaka
+DESIGNATE_BACKEND_DRIVER=fake
+
+#-----------------------------
+# To enable Murano Plugin
+#-----------------------------
+enable_plugin murano https://git.openstack.org/openstack/murano stable/mitaka
+MURANO_BRANCH=stable/mitaka
+MURANO_DASHBOARD_BRANCH=stable/mitaka
+enable_service murano-cfapi
+MURANO_APPS=io.murano.apps.apache.Tomcat,io.murano.apps.Guacamole
+# murano devstack enables q-metering by default
+disable_service q-metering
+
+#-----------------------------
+# For LIBS FROM GIT
+#-----------------------------
+LIBS_FROM_GIT=django_openstack_auth
+HORIZONAUTH_BRANCH=stable/mitaka
+
+#-----------------------------
+# To enable Neutron Plugin
+#-----------------------------
+enable_plugin neutron https://git.openstack.org/openstack/neutron stable/mitaka
+#enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
+#NEUTRON_LBAAS_SERVICE_PROVIDERV2="LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.plugin_driver.HaproxyOnHostPlugi
+nDriver:default"
+#NEUTRON_LBAAS_SERVICE_PROVIDERV2="LOADBALANCERV2:Octavia:neutron_lbaas.drivers.octavia.driver.OctaviaDriver:default"
+#enable_plugin neutron-lbaas-dashboard https://git.openstack.org/openstack/neutron-lbaas-dashboard
+#enable_plugin neutron-lbaas-dashboard file:///home/ubuntu/work/neutron-lbaas-dashboard review/akihiro_motoki/devstack-plugin
+enable_plugin neutron-vpnaas https://git.openstack.org/openstack/neutron-vpnaas stable/mitaka
+
+#-----------------------------
+# Neutron
+#-----------------------------
+disable_service n-net
+enable_service neutron q-svc q-agt
+enable_service q-dhcp
+enable_service q-l3
+enable_service q-meta
+#enable_service q-lbaas
+enable_service q-lbaasv2
+enable_service q-fwaas
+enable_service q-vpn
+enable_service q-qos
+enable_service q-flavors
