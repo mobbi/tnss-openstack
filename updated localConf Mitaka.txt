@@ -39,7 +39,7 @@ SWIFT_HASH=$ADMIN_PASSWORD
 # from an Ethernet interface to a bridge on the host. Setting it here also
 # makes it available for ``openrc`` to include when setting ``OS_AUTH_URL``.
 # Neither is set by default.
-HOST_IP=192.168.33.110
+#HOST_IP=xx.xx.xx.xx
 #HOST_IPV6=2001:db8::7
 
 
